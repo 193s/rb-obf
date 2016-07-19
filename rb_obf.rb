@@ -37,9 +37,13 @@ end
 
 
 def demo(cases)
-  cases.each do |x|
+  cases.each do |code|
     puts '-----'
-    puts "%s\n| |\nV V\n%s" % [x, obfuscate(x)]
+    obfuscated = obfuscate(code)
+    puts "%s\n| |\nV V\n%s" % [code, obfuscated]
+    if (eval code) != (eval obfuscated)
+      raise 'Assertion failed'
+    end
   end
 end
 
