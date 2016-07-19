@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require 'ruby_parser'
 require 'ruby2ruby'
-# require 'ripper'
-# require 'sorcerer'
 
 @parser = RubyParser.new
 
@@ -24,9 +22,6 @@ def replaceSexp(node)
 end
 
 def obfuscate(code)
-  #sexp = Ripper::SexpBuilder.new(code).parse
-  #p sexp
-  #Sorcerer.source(sexp)
   ruby2ruby = Ruby2Ruby.new
   sexp      = @parser.process(code)
   p sexp
