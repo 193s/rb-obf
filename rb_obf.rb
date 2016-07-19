@@ -48,5 +48,7 @@ def demo(cases)
   end
 end
 
-demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"])
+if __FILE__ == $0
+  demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"])
+end
 
