@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -s
 require 'ruby_parser'
 require_relative '../ruby2ruby/lib/ruby2ruby.rb'
 
@@ -9,8 +9,8 @@ def replaceSexp(node)
   case type
   when :lit
     val = node[1]
-    if val.class == Fixnum
-      return @parser.parse('/$/=~' + (['??']*val).join('+'))
+    if val.class == Fixnum and val <= 10
+      return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
     end
     return [type, val]
   when :str
@@ -27,12 +27,12 @@ def replaceSexp(node)
   end)
 end
 
-def obfuscate(code)
+def obfuscate(code, verbose=false)
   ruby2ruby = Ruby2Ruby.new
   sexp      = @parser.process(code)
-  p sexp
+  p sexp if verbose
   #sexp = replaceSexp(sexp)
-  p sexp
+  #p sexp if verbose
   ruby2ruby.process(sexp)
 end
 
@@ -40,7 +40,7 @@ end
 def demo(cases, evaluate=false)
   cases.map do |code|
     puts '-----'
-    obfuscated = obfuscate(code)
+    obfuscated = obfuscate(code, verbose=true)
     puts "%s\n| |\nV V\n%s" % [code, obfuscated]
     if evaluate
       if (eval code) != (eval obfuscated)
@@ -51,9 +51,23 @@ def demo(cases, evaluate=false)
   end
 end
 
-if __FILE__ == $0
-  puts '---------'
-  File.write("obfuscated_#{File.basename(__FILE__)}", demo([File.read(__FILE__)])[0])
+$h ||= false
+$v ||= false
+
+if $h
+  puts "usage: #{File.basename $0} [-hv] [file ...]"
+  exit 1
 end
 
-demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"], evaluate=true)
+ARGV.push "-" if ARGV.empty?
+
+ARGV.each do |file|
+  ruby = file == "-" ? $stdin.read : File.read(file)
+  outfile = "#{File.dirname(file)}/obfuscated_#{File.basename(file)}"
+  if $v
+    data = demo([ruby])[0]
+  else
+    data = obfuscate(ruby)
+  end
+  File.write(outfile, data)
+end
