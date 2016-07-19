@@ -9,11 +9,11 @@ def replaceSexp(node)
   case type
   when :lit
     val = node[1]
-    if val.class == Fixnum and val <= 10
+    if val.class == Fixnum
       if val == 0
         return  @parser.parse("//=~%()")
       elsif val > 0
-        return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
+        return @parser.parse('(/$/=~' + (['?)']*val).join('+') + ')')
       end
     end
     return [type, val]
