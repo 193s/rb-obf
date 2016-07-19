@@ -31,24 +31,29 @@ def obfuscate(code)
   ruby2ruby = Ruby2Ruby.new
   sexp      = @parser.process(code)
   p sexp
-  sexp = replaceSexp(sexp)
+  #sexp = replaceSexp(sexp)
   p sexp
   ruby2ruby.process(sexp)
 end
 
 
-def demo(cases)
-  cases.each do |code|
+def demo(cases, evaluate=false)
+  cases.map do |code|
     puts '-----'
     obfuscated = obfuscate(code)
     puts "%s\n| |\nV V\n%s" % [code, obfuscated]
-    if (eval code) != (eval obfuscated)
-      raise 'Assertion failed'
+    if evaluate
+      if (eval code) != (eval obfuscated)
+        raise 'Assertion failed'
+      end
     end
+    obfuscated
   end
 end
 
 if __FILE__ == $0
-  demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"])
+  puts '---------'
+  File.write("obfuscated_#{File.basename(__FILE__)}", demo([File.read(__FILE__)])[0])
 end
 
+demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"], evaluate=true)
