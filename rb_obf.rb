@@ -10,12 +10,16 @@ def replaceSexp(node)
   when :lit
     val = node[1]
     if val.class == Fixnum and val <= 10
-      return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
+      if val == 0
+        return  @parser.parse("//=~%()")
+      elsif val > 0
+        #return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
+      end
     end
     return [type, val]
   when :str
     val = node[1]
-    return @parser.parse('`#`') if val.empty?
+    return @parser.parse('%()') if val.empty?
   end
 
   Sexp.from_array(node.map do |x|
@@ -31,8 +35,8 @@ def obfuscate(code, verbose=false)
   ruby2ruby = Ruby2Ruby.new
   sexp      = @parser.process(code)
   p sexp if verbose
-  #sexp = replaceSexp(sexp)
-  #p sexp if verbose
+  sexp = replaceSexp(sexp)
+  p sexp if verbose
   ruby2ruby.process(sexp)
 end
 
@@ -63,11 +67,12 @@ ARGV.push "-" if ARGV.empty?
 
 ARGV.each do |file|
   ruby = file == "-" ? $stdin.read : File.read(file)
-  outfile = "#{File.dirname(file)}/obfuscated_#{File.basename(file)}"
+  #outfile = "#{File.dirname(file)}/obfuscated_#{File.basename(file)}"
   if $v
     data = demo([ruby])[0]
   else
     data = obfuscate(ruby)
   end
-  File.write(outfile, data)
+  #File.write(outfile, data)
+  print data
 end
