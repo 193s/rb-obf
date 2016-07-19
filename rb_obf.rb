@@ -47,5 +47,5 @@ def demo(cases)
   end
 end
 
-demo(['puts 3', 'p "Hello, World!"', "def A\n3\n1\nend"])
+demo(['puts 3', 'p "Hello, World!"', "def a\n3\n1\nend\na"])
 
