@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'ruby_parser'
-require 'ruby2ruby'
+require_relative '../ruby2ruby/lib/ruby2ruby.rb'
 
 @parser = RubyParser.new
 
