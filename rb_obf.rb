@@ -13,13 +13,17 @@ def replaceSexp(node)
       if val == 0
         return  @parser.parse("//=~%()")
       elsif val > 0
-        #return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
+        return @parser.parse('(/$/=~' + (['??']*val).join('+') + ')')
       end
     end
     return [type, val]
   when :str
     val = node[1]
     return @parser.parse('%()') if val.empty?
+  when :true
+    return @parser.parse("!()")
+  when :false
+    return @parser.parse("![]")
   end
 
   Sexp.from_array(node.map do |x|
