@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -s
 require 'ruby_parser'
-require_relative '../ruby2ruby/lib/ruby2ruby.rb'
+require_relative './lib/ruby2ruby.rb'
 
 @parser = RubyParser.new
 
@@ -11,7 +11,7 @@ def replaceSexp(node)
     val = node[1]
     if val.class == Fixnum
       if val == 0
-        return  @parser.parse("//=~%()")
+        return  @parser.parse('//=~%()')
       elsif val > 0
         return @parser.parse('(/$/=~' + (['?)']*val).join('+') + ')')
       end
@@ -21,9 +21,9 @@ def replaceSexp(node)
     val = node[1]
     return @parser.parse('%()') if val.empty?
   when :true
-    return @parser.parse("!()")
+    return @parser.parse('!()')
   when :false
-    return @parser.parse("![]")
+    return @parser.parse('![]')
   end
 
   Sexp.from_array(node.map do |x|
