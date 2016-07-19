@@ -5,13 +5,19 @@ require 'ruby2ruby'
 @parser = RubyParser.new
 
 def replaceSexp(node)
-  if node[0] == :lit
+  type = node[0]
+  case type
+  when :lit
     val = node[1]
     if val.class == Fixnum
       return @parser.parse('/$/=~' + (['??']*val).join('+'))
     end
-    return [node[0], val]
+    return [type, val]
+  when :str
+    val = node[1]
+    return @parser.parse('`#`') if val.empty?
   end
+
   Sexp.from_array(node.map do |x|
     if x.class == Sexp
       replaceSexp(x)
@@ -42,5 +48,5 @@ def demo(cases)
   end
 end
 
-demo(['puts 3', 'p "Hello, World!"', "def a\n3\n1\nend\na"])
+demo(['puts 3', 'p "", "A", "Hello, World!"', "def a\n3\n1\nend\na"])
 
